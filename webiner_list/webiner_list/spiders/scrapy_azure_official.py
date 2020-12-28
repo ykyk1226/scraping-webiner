@@ -14,8 +14,6 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
                 title = event.css('.column.medium-11 a::text').extract_first().strip(),
                 date = event.css('.column.medium-11 span::text').extract_first().strip()
             )
-        # DB保存時に日本時間に直してから保存
-        # datetime.datetime.strptime(date.split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=9)
 
         next_page_number = response.css('.row.column .wa-pagination li a::attr(data-pagination-page)')[-1].extract()
         if next_page_number == "2":
