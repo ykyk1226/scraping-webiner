@@ -7,9 +7,11 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 from datetime import datetime, timedelta
+import scrapy
 
 class ModifyDataPipeline:
-    def modify_date_to_jst(self, item, spider):
+    def process_item(self, item: scrapy.Item, spider: scrapy.Spider):
+        # webiner開催時間を日本時間に修正
         if spider.name in ['scrapy_azure_official']:
             item['date'] = datetime.datetime.strptime(item['date'].split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=9)
 
