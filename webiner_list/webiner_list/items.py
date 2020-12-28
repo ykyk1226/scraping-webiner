@@ -10,3 +10,4 @@ class AzureOfficialItem(scrapy.Item):
     url = scrapy.Field()
     title = scrapy.Field()
     date = scrapy.Field()
+    category_id = scrapy.Field()
