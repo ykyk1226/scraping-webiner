@@ -1,6 +1,6 @@
 FROM python:3.9.1-buster
 
-RUN apt update && apt -y install gcc unixodbc unixodbc-dev
+RUN apt update && apt -y install gcc unixodbc unixodbc-dev freetds-dev freetds-bin tdsodbc
 COPY settings/requirements.txt /tmp/requirements.txt
 COPY setting/.odbcinst.ini ~/.odbcinst.ini
 RUN pip install -r /tmp/requirements.txt
