@@ -10,13 +10,14 @@ import pyodbc
 
 class DbPipeline:
     def open_spider(self, spider: scrapy.Spider):
+        version = '8.0'
         driver = 'FreeTDS'
         server = 'scraping-app-db.database.windows.net'
         port = "1433"
         database = "scraping-app-db"
         username = 'appuser'
         password = 'P@ssword'
-        self.conn = pyodbc.connect('DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;UID=%s;PWD=%s' % (driver, server, port, database, username, password))
+        self.conn = pyodbc.connect('TDS_Version={%s};DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;UID=%s;PWD=%s' % (version, driver, server, port, database, username, password))
 
         delete_sel = "DELETE FROM webiner_lists"
         curs = self.conn.cursor()
