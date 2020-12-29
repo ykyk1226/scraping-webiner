@@ -11,7 +11,7 @@ import pyodbc
 class DbPipeline:
     def open_spider(self, spider: scrapy.Spider):
         driver = '/usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so'
-        server = 'tcp:scraping-app-db.database.windows.net'
+        server = 'scraping-app-db.database.windows.net'
         port = "1433"
         database = "scraping-app-db"
         username = 'appuser'
