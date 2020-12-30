@@ -30,7 +30,7 @@ jobs:
           tags: yoshiaki1226/scraping-app:dev
           build-args: |
             ENV_DB_SERVER=${{ secrets.DB_SERVER }}
-            ENV_DB_PORT=${{ secrets.DB_PORT}}
+            ENV_DB_PORT=${{ secrets.DB_PORT }}
             ENV_DATABASE=${{ secrets.DATABASE }}
             ENV_USER=${{ secrets.USER }}
             ENV_PASSWORD=${{ secrets.PASSWORD }}
