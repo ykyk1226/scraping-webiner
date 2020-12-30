@@ -2,7 +2,11 @@ name: Push Image to DockerHub
 
 on:
   push:
-    branches: master
+    branches:
+    - master
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
