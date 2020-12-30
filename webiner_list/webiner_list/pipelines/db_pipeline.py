@@ -7,16 +7,17 @@
 from itemadapter import ItemAdapter
 import scrapy
 import pyodbc
+import os
 
 class DbPipeline:
     def open_spider(self, spider):
         version = '8.0'
         driver = 'FreeTDS'
-        server = 'scraping-app-db.database.windows.net'
-        port = "1433"
-        database = "scraping-app-db"
-        username = 'appuser'
-        password = 'P@ssword'
+        server = os.environ.get('ENV_DB_SERVER')
+        port = os.environ.get('ENV_DB_PORT')
+        database = os.environ.get('ENV_DATABASE')
+        username = os.environ.get('ENV_USER')
+        password = os.environ.get('ENV_PASSWORD')
         self.conn = pyodbc.connect('TDS_Version={%s};DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;UID=%s;PWD=%s' % (version, driver, server, port, database, username, password))
 
         curs = self.conn.cursor()
