@@ -1,2 +1,3 @@
 pyodbc==4.0.30
 scrapy==2.4.1
+pytz==2020.5

@@ -1,5 +1,7 @@
 import scrapy
 from webiner_list.items import AzureOfficialItem
+import pytz
+import datetime
 
 class ScrapyAzureOfficialSpider(scrapy.Spider):
     name = 'scrapy_azure_official'
@@ -14,7 +16,8 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
                 title = event.css('.column.medium-11 a::text').extract_first().strip(),
                 date = event.css('.column.medium-11 span::text').extract_first().strip(),
                 category_id = "1",
-                source_site_id = "1"
+                source_site_id = "1",
+                updated_at = datetime.datetime.now(pytz.timezone('Asia/Tokyo')).strftime('%Y/%m/%d %H:%M:%S')
             )
 
         next_page_number = response.css('.row.column .wa-pagination li a::attr(data-pagination-page)')[-1].extract()
