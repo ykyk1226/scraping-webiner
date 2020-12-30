@@ -19,5 +19,6 @@ ADD ./webiner_list /usr/src/webiner_list
 COPY settings/exec.sh /usr/src/exec.sh
 WORKDIR /usr/src/webiner_list
 
+# spiderを追加した場合はexec.shに追加
 ENTRYPOINT ["/bin/bash"]
 CMD ["/usr/src/exec.sh"]
