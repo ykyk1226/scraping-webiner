@@ -13,7 +13,8 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
                 url = event.css('.column.medium-11 a::attr(href)').extract_first().strip(),
                 title = event.css('.column.medium-11 a::text').extract_first().strip(),
                 date = event.css('.column.medium-11 span::text').extract_first().strip(),
-                category_id = "1"
+                category_id = "1",
+                source_site_id = "1"
             )
 
         next_page_number = response.css('.row.column .wa-pagination li a::attr(data-pagination-page)')[-1].extract()

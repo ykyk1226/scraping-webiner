@@ -9,7 +9,7 @@ import scrapy
 import pyodbc
 
 class DbPipeline:
-    def open_spider(self, spider: scrapy.Spider):
+    def open_spider(self, item: scrapy.Item, spider: scrapy.Spider):
         version = '8.0'
         driver = 'FreeTDS'
         server = 'scraping-app-db.database.windows.net'
@@ -19,9 +19,9 @@ class DbPipeline:
         password = 'P@ssword'
         self.conn = pyodbc.connect('TDS_Version={%s};DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;UID=%s;PWD=%s' % (version, driver, server, port, database, username, password))
 
-        delete_sel = "DELETE FROM webiner_lists"
         curs = self.conn.cursor()
-        curs.execute(delete_sel)
+        delete_sel = "DELETE FROM webiner_lists WHERE source_site_id = ?"
+        curs.execute(delete_sel, (item['source_site_id']))
         self.conn.commit()
 
     def close_spider(self, spider: scrapy.Spider):
