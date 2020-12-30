@@ -3,6 +3,7 @@ name: Push Image to DockerHub
 on:
   push:
     branches: master
+  workflow_dispatch:
 
 jobs:
   main:
