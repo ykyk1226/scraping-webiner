@@ -9,7 +9,7 @@ import scrapy
 import pyodbc
 
 class DbPipeline:
-    def open_spider(self, item: scrapy.Item, spider: scrapy.Spider):
+    def open_spider(self, spider):
         version = '8.0'
         driver = 'FreeTDS'
         server = 'scraping-app-db.database.windows.net'
@@ -21,16 +21,16 @@ class DbPipeline:
 
         curs = self.conn.cursor()
         delete_sel = "DELETE FROM webiner_lists WHERE source_site_id = ?"
-        curs.execute(delete_sel, (item['source_site_id']))
+        curs.execute(delete_sel, (spider.source_site_id))
         self.conn.commit()
 
-    def close_spider(self, spider: scrapy.Spider):
+    def close_spider(self, spider):
         self.conn.close()
 
-    def process_item(self, item: scrapy.Item, spider: scrapy.Spider):
+    def process_item(self, item, spider):
         curs = self.conn.cursor()
         insert_sql = "INSERT INTO webiner_lists VALUES (CAST(NEXT VALUE FOR WebinerListsSequence AS VARCHAR), ?, ?, ?, ?, ?, ?)"
-        curs.execute(insert_sql, (item['title'], item['url'], item['date'].strftime('%Y/%m/%d %H:%M:%S'), item['category_id'], item['source_site_id'], item['updated_at']))
+        curs.execute(insert_sql, (item['title'], item['url'], item['date'].strftime('%Y/%m/%d %H:%M:%S'), item['category_id'], spider.source_site_id, item['updated_at']))
         self.conn.commit()
 
         return item

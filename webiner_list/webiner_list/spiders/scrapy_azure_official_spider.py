@@ -7,6 +7,7 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
     name = 'scrapy_azure_official'
     allowed_domains = ['azure.microsoft.com']
     start_urls = ['https://azure.microsoft.com/ja-jp/community/events/?Page=1']
+    source_site_id = "1"
 
     def parse(self, response):
         # webiner一覧を取得
@@ -16,7 +17,6 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
                 title = event.css('.column.medium-11 a::text').extract_first().strip(),
                 date = event.css('.column.medium-11 span::text').extract_first().strip(),
                 category_id = "1",
-                source_site_id = "1",
                 updated_at = datetime.datetime.now(pytz.timezone('Asia/Tokyo')).strftime('%Y/%m/%d %H:%M:%S')
             )
 
