@@ -20,8 +20,6 @@ COPY ./webiner_list /usr/src/webiner_list
 COPY settings/exec.sh /usr/src/exec.sh
 
 RUN useradd appuser && \
-    groupadd appuser && \
-    usermod -G appuser appuser && \
     chown -R appuser:appuser /usr/src/exec.sh && \
     chown -R appuser:appuser /usr/src/webiner_list
 
