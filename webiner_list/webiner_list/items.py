@@ -9,6 +9,7 @@ import scrapy
 class AzureOfficialItem(scrapy.Item):
     url = scrapy.Field()
     title = scrapy.Field()
-    date = scrapy.Field()
+    start_date = scrapy.Field()
+    end_date = scrapy.Field()
     category_id = scrapy.Field()
     updated_at = scrapy.Field()

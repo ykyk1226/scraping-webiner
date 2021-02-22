@@ -13,6 +13,7 @@ class ModifyDataPipeline:
     def process_item(self, item: scrapy.Item, spider: scrapy.Spider):
         # webiner開催時間を日本時間に修正
         if spider.name in ['scrapy_azure_official']:
-            item['date'] = datetime.strptime(item['date'].split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=9)
+            item['start_date'] = datetime.strptime(item['start_date'].split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=9)
+            item['end_date'] = datetime.strptime(item['start_date'].split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=2)
 
         return item

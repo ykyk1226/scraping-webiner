@@ -15,7 +15,8 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
             yield AzureOfficialItem(
                 url = event.css('.column.medium-11 a::attr(href)').extract_first().strip(),
                 title = event.css('.column.medium-11 a::text').extract_first().strip(),
-                date = event.css('.column.medium-11 span::text').extract_first().strip(),
+                start_date = event.css('.column.medium-11 span::text').extract_first().strip(),
+                end_date = event.css('.column.medium-11 span::text').extract_first().strip(),
                 category_id = "1",
                 updated_at = datetime.datetime.now(pytz.timezone('Asia/Tokyo')).strftime('%Y/%m/%d %H:%M:%S')
             )
