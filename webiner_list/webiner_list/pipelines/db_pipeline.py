@@ -30,8 +30,8 @@ class DbPipeline:
 
     def process_item(self, item, spider):
         curs = self.conn.cursor()
-        insert_sql = "INSERT INTO webiner_lists VALUES (CAST(NEXT VALUE FOR WebinerListsSequence AS VARCHAR), ?, ?, ?, ?, ?, ?)"
-        curs.execute(insert_sql, (item['title'], item['url'], item['date'].strftime('%Y/%m/%d %H:%M:%S'), item['category_id'], spider.source_site_id, item['updated_at']))
+        insert_sql = "INSERT INTO webiner_lists VALUES (CAST(NEXT VALUE FOR WebinerListsSequence AS VARCHAR), ?, ?, ?, ?, ?, ?, ?)"
+        curs.execute(insert_sql, (item['title'], item['url'], item['start_date'].strftime('%Y/%m/%d %H:%M:%S'), item['category_id'], spider.source_site_id, item['updated_at'], item['end_date'].strftime('%Y/%m/%d %H:%M:%S')))
         self.conn.commit()
 
         return item
