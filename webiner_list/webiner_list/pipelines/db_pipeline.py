@@ -38,7 +38,7 @@ class DbPipeline:
 
         if insert_flg:
             insert_sql = "INSERT INTO webiner_lists VALUES (CAST(NEXT VALUE FOR WebinerListsSequence AS VARCHAR), ?, ?, ?, ?, ?, ?, ?)"
-            curs.execute(insert_sql, (item['title'], item['url'], item['start_date'].strftime('%Y/%m/%d %H:%M:%S'), item['category_id'], spider.source_site_id, item['updated_at'], item['end_date'].strftime('%Y/%m/%d %H:%M:%S')))
+            curs.execute(insert_sql, (item['title'], item['url'], item['category_id'], spider.source_site_id, item['start_date'], item['end_date'], item['updated_at']))
             self.conn.commit()
 
         return item

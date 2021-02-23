@@ -47,7 +47,7 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
                 start_date = start_date,
                 end_date = end_date,
                 category_id = "1",
-                updated_at = datetime.now(pytz.timezone('Asia/Tokyo')).strftime('%Y/%m/%d %H:%M:%S')
+                updated_at = datetime.now(pytz.timezone('Asia/Tokyo'))
             )
 
         next_page_number = response.css('.row.column .wa-pagination li a::attr(data-pagination-page)')[-1].extract()
