@@ -20,7 +20,12 @@ class DbPipeline:
         password = os.environ.get('ENV_PASSWORD')
         self.conn = pyodbc.connect('TDS_Version={%s};DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;UID=%s;PWD=%s' % (version, driver, server, port, database, username, password))
 
+        curs = self.conn.cursor()
+        delete_sql = "DELETE FROM webiner_lists WHERE start_date < GETDATE()"
+        curs.execute(delete_sql)
+
     def close_spider(self, spider):
+        self.conn.commit()
         self.conn.close()
 
     def process_item(self, item, spider):
@@ -39,6 +44,5 @@ class DbPipeline:
         if insert_flg:
             insert_sql = "INSERT INTO webiner_lists VALUES (CAST(NEXT VALUE FOR WebinerListsSequence AS VARCHAR), ?, ?, ?, ?, ?, ?, ?)"
             curs.execute(insert_sql, (item['title'], item['url'], item['category_id'], spider.source_site_id, item['start_date'], item['end_date'], item['updated_at']))
-            self.conn.commit()
 
         return item
