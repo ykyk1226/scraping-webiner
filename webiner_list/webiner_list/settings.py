@@ -63,7 +63,6 @@ DOWNLOAD_DELAY = 3
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'webiner_list.pipelines.modify_data_pipeline.ModifyDataPipeline': 100,
     'webiner_list.pipelines.db_pipeline.DbPipeline': 200,
 }
 
