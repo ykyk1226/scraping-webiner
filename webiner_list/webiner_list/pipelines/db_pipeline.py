@@ -20,18 +20,25 @@ class DbPipeline:
         password = os.environ.get('ENV_PASSWORD')
         self.conn = pyodbc.connect('TDS_Version={%s};DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;UID=%s;PWD=%s' % (version, driver, server, port, database, username, password))
 
-        curs = self.conn.cursor()
-        delete_sel = "DELETE FROM webiner_lists WHERE source_site_id = ?"
-        curs.execute(delete_sel, (spider.source_site_id))
-        self.conn.commit()
-
     def close_spider(self, spider):
         self.conn.close()
 
     def process_item(self, item, spider):
         curs = self.conn.cursor()
-        insert_sql = "INSERT INTO webiner_lists VALUES (CAST(NEXT VALUE FOR WebinerListsSequence AS VARCHAR), ?, ?, ?, ?, ?, ?, ?)"
-        curs.execute(insert_sql, (item['title'], item['url'], item['start_date'].strftime('%Y/%m/%d %H:%M:%S'), item['category_id'], spider.source_site_id, item['updated_at'], item['end_date'].strftime('%Y/%m/%d %H:%M:%S')))
-        self.conn.commit()
+        insert_flg = True
+
+        # titleとurlが同一のwebinerはinsertしない
+        select_sql = "SELECT title, url FROM webiner_lists WHERE title = ? and url = ?"
+        curs.execute(select_sql, (item['title'], item['url']))
+        res = curs.fetchall()
+        for r in res:
+            if r[0] == item['title'] and r[1] == item['url']:
+                insert_flg = False
+                break
+
+        if insert_flg:
+            insert_sql = "INSERT INTO webiner_lists VALUES (CAST(NEXT VALUE FOR WebinerListsSequence AS VARCHAR), ?, ?, ?, ?, ?, ?, ?)"
+            curs.execute(insert_sql, (item['title'], item['url'], item['start_date'].strftime('%Y/%m/%d %H:%M:%S'), item['category_id'], spider.source_site_id, item['updated_at'], item['end_date'].strftime('%Y/%m/%d %H:%M:%S')))
+            self.conn.commit()
 
         return item
