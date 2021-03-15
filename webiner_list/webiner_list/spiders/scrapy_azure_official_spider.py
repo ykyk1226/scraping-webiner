@@ -3,7 +3,7 @@ from webiner_list.items import AzureOfficialItem
 import pytz
 from datetime import datetime, timedelta
 from urllib.request import urlopen
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 
 class ScrapyAzureOfficialSpider(scrapy.Spider):
     name = 'scrapy_azure_official'
