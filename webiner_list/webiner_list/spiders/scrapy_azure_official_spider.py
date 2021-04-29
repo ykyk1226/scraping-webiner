@@ -38,8 +38,8 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
             # webiner開催時間を日本時間に修正
             end_date = event.css('.column.medium-11 span::text').extract_first().strip()
             start_date = event.css('.column.medium-11 span::text').extract_first().strip()
-            end_date = datetime.strptime(start_date.split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=11)
-            start_date = datetime.strptime(start_date.split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=9)
+            end_date = datetime.strptime(start_date.split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=2)
+            start_date = datetime.strptime(start_date.split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S')
 
             yield AzureOfficialItem(
                 url = webiner_url,
