@@ -4,10 +4,10 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
-import scrapy
 import pyodbc
 import os
+import pytz
+from datetime import datetime
 
 class DbPipeline:
     def open_spider(self, spider):
@@ -21,6 +21,8 @@ class DbPipeline:
         self.conn = pyodbc.connect('TDS_Version={%s};DRIVER={%s};SERVER=%s;PORT=%s;DATABASE=%s;UID=%s;PWD=%s' % (version, driver, server, port, database, username, password))
 
         curs = self.conn.cursor()
+
+        # DBの要領削減のため実施済みのWebiner情報は削除する
         delete_sql = "DELETE FROM webiner_lists WHERE start_date < GETDATE()"
         curs.execute(delete_sql)
 
@@ -31,18 +33,19 @@ class DbPipeline:
     def process_item(self, item, spider):
         curs = self.conn.cursor()
         insert_flg = True
+        updated_at = datetime.now(pytz.timezone('Asia/Tokyo'))
 
-        # titleとurlが同一のwebinerはinsertしない
+        # 既に登録済みのWebinerは登録しない
         select_sql = "SELECT title, url FROM webiner_lists WHERE title = ? and url = ?"
         curs.execute(select_sql, (item['title'], item['url']))
-        res = curs.fetchall()
-        for r in res:
-            if r[0] == item['title'] and r[1] == item['url']:
+        rows = curs.fetchall()
+        for row in rows:
+            if row[0] == item['title'] and row[1] == item['url']:
                 insert_flg = False
                 break
 
         if insert_flg:
             insert_sql = "INSERT INTO webiner_lists VALUES (CAST(NEXT VALUE FOR WebinerListsSequence AS VARCHAR), ?, ?, ?, ?, ?, ?, ?)"
-            curs.execute(insert_sql, (item['title'], item['url'], item['category_id'], spider.source_site_id, item['start_date'], item['end_date'], item['updated_at']))
+            curs.execute(insert_sql, (item['title'], item['url'], item['category_id'], spider.source_site_id, item['start_date'], item['end_date'], updated_at))
 
         return item

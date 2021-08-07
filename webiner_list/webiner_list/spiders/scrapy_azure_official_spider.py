@@ -1,6 +1,5 @@
 import scrapy
-from webiner_list.items import AzureOfficialItem
-import pytz
+from webiner_list.items import WebinerItem
 from datetime import datetime, timedelta
 
 class ScrapyAzureOfficialSpider(scrapy.Spider):
@@ -12,7 +11,8 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
     def parse(self, response):
         # webiner一覧を取得
         for event in response.css('.row.event-item'):
-            webiner_url = event.css('.column.medium-11 a::attr(href)').extract_first().strip()
+            url = event.css('.column.medium-11 a::attr(href)').extract_first().strip()
+            title = event.css('.column.medium-11 a::text').extract_first().strip()
 
             # webiner開催時間を日本時間に修正
             end_date = event.css('.column.medium-11 span::text').extract_first().strip()
@@ -20,13 +20,12 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
             end_date = datetime.strptime(start_date.split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=2)
             start_date = datetime.strptime(start_date.split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S')
 
-            yield AzureOfficialItem(
-                url = webiner_url,
-                title = event.css('.column.medium-11 a::text').extract_first().strip(),
+            yield WebinerItem(
+                url = url,
+                title = title,
                 start_date = start_date,
                 end_date = end_date,
                 category_id = "1",
-                updated_at = datetime.now(pytz.timezone('Asia/Tokyo'))
             )
 
         next_page_number = response.css('.row.column .wa-pagination li a::attr(data-pagination-page)')[-1].extract()
