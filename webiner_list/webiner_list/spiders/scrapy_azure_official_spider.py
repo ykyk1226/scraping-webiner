@@ -1,24 +1,30 @@
 import scrapy
 from webiner_list.items import WebinerItem
 from datetime import datetime, timedelta
+import logging
 
 class ScrapyAzureOfficialSpider(scrapy.Spider):
     name = 'scrapy_azure_official'
     allowed_domains = ['azure.microsoft.com']
-    start_urls = ['https://azure.microsoft.com/ja-jp/community/events/?Page=1']
+    start_urls = ['https://events.microsoft.com/ja-jp/Azure']
     source_site_id = "1"
 
     def parse(self, response):
-        # webiner一覧を取得
-        for event in response.css('.row.event-item'):
-            url = event.css('.column.medium-11 a::attr(href)').extract_first().strip()
-            title = event.css('.column.medium-11 a::text').extract_first().strip()
+        logging.info("Start parsing in %s", self.start_urls)
 
-            # webiner開催時間を日本時間に修正
-            end_date = event.css('.column.medium-11 span::text').extract_first().strip()
-            start_date = event.css('.column.medium-11 span::text').extract_first().strip()
-            end_date = datetime.strptime(start_date.split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S') + timedelta(hours=2)
-            start_date = datetime.strptime(start_date.split(" ", 1)[1].rsplit(" ", 1)[0],'%d %b %Y %H:%M:%S')
+        # webiner一覧を取得
+        for event in response.css('.c-card.bgcolor-white'):
+            try:
+                url = event.css('.card-footer .c-button::attr(onclick)').extract_first().lstrip("window.open('").rstrip("', '_blank')")
+                title = event.css('.gridcard-heading-favourite h3::text').extract_first().strip()
+                event_date = event.css('.title-date::text').extract_first().strip()
+                # PSTからJSTに変換（時間がPSTでない場合は例外をスロー）
+                start_date = datetime.strptime(event_date.split(" - ", 1)[0],'%m/%d/%Y | %H:%M') + timedelta(hours=17)
+                end_date = datetime.strptime(event_date.split("| ", 1)[0] + event_date.split("- ", 1)[1],'%m/%d/%Y %H:%M (PST)') + timedelta(hours=17)
+            except ValueError as e:
+                logging.error("Failed to parse in %s", self.start_urls)
+                logging.error(e)
+                continue
 
             yield WebinerItem(
                 url = url,
@@ -28,10 +34,6 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
                 category_id = "1",
             )
 
-        next_page_number = response.css('.row.column .wa-pagination li a::attr(data-pagination-page)')[-1].extract()
-        if next_page_number == "2":
-            next_page_link = response.css('.row.column .wa-pagination li a::attr(href)')[-1].extract()
-            next_page_link = response.urljoin(next_page_link)
-            yield scrapy.Request(next_page_link, callback=self.parse)
+        logging.info("Complete parsing in %s", self.start_urls)
 
         return
