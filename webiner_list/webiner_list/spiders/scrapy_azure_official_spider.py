@@ -18,9 +18,9 @@ class ScrapyAzureOfficialSpider(scrapy.Spider):
                 url = event.css('.card-footer .c-button::attr(onclick)').extract_first().lstrip("window.open('").rstrip("', '_blank')")
                 title = event.css('.gridcard-heading-favourite h3::text').extract_first().strip()
                 event_date = event.css('.title-date::text').extract_first().strip()
-                # PSTからJSTに変換（時間がPSTでない場合は例外をスロー）
-                start_date = datetime.strptime(event_date.split(" - ", 1)[0],'%m/%d/%Y | %H:%M') + timedelta(hours=17)
-                end_date = datetime.strptime(event_date.split("| ", 1)[0] + event_date.split("- ", 1)[1],'%m/%d/%Y %H:%M (PST)') + timedelta(hours=17)
+                # PSTからUTCに変換（時間がPSTでない場合は例外をスロー）
+                start_date = datetime.strptime(event_date.split(" - ", 1)[0],'%m/%d/%Y | %H:%M') + timedelta(hours=8)
+                end_date = datetime.strptime(event_date.split("| ", 1)[0] + event_date.split("- ", 1)[1],'%m/%d/%Y %H:%M (PST)') + timedelta(hours=8)
             except ValueError as e:
                 logging.error("Failed to parse in %s", self.start_urls)
                 logging.error(e)
